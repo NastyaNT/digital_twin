@@ -142,6 +142,33 @@
   </joint>
 
 
+  <!-- imu_block1 -->
+  <link name="imu_block1">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <joint name="link1_to_imu_block1" type="fixed">
+    <origin xyz="${link1_r/2 + 0.015 + 0.015/2} 0 ${link1_l/2 + 0.005/2}" rpy="0 0 0"/>
+    <parent link="link1"/>
+    <child link="imu_block1"/>
+  </joint>
+
+
   <!-- for_link2_1 -->
   <link name="for_link2_1">
     <collision>
@@ -225,8 +252,37 @@
   </joint>
 
 
-  <!-- imu_block -->
-  <link name="imu_block">
+
+  <!-- imu_block2 -->
+  <link name="imu_block2">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <joint name="link2_to_imu_block2" type="fixed">
+    <origin xyz="0 ${0.025/2 + link2_d/2} 0" rpy="0 ${3.14/2 + 3.14/6} 0"/>
+    <parent link="link2"/>
+    <child link="imu_block2"/>
+  </joint>
+
+
+
+  <!-- laser1 -->
+  <link name="laser1">
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -245,10 +301,10 @@
     <xacro:default_inertial mass="1e-5"/>
   </link>
 
-  <joint name="link2_to_imu_block" type="fixed">
-    <origin xyz="${0.017 + 0.0125} ${-link2_d + link1_r} 0.046" rpy="0 0 0"/>
+  <joint name="link2_to_laser1" type="fixed">
+    <origin xyz="${0.017 + 0.0125} ${-link2_d + link1_r} 0.046" rpy="0 ${3.14 + 3.14/2/2/2} 0"/>
     <parent link="link2"/>
-    <child link="imu_block"/>
+    <child link="laser1"/>
   </joint>
 
 
@@ -280,6 +336,33 @@
     <child link="link3"/>
     <limit effort="0.245166" lower="0" upper="3.355" velocity="0.5"/>
     <axis xyz="0 1 0"/>
+  </joint>
+
+
+  <!-- imu_block3 -->
+  <link name="imu_block3">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.025 0.015 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.025 0.015 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <joint name="link3_to_imu_block3" type="fixed">
+    <origin xyz="${-0.025/2} ${link3_d/2} ${link3_h - 0.005}" rpy="0 0 0"/>
+    <parent link="link3"/>
+    <child link="imu_block3"/>
   </joint>
 
 
@@ -340,6 +423,33 @@
   </joint>
 
 
+  <!-- imu_block4 -->
+  <link name="imu_block4">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <joint name="for_link5_1_to_imu_block4" type="fixed">
+    <origin xyz="0 0 ${0.005/2 + for_link5_h/2}" rpy="0 0 0"/>
+    <parent link="for_link5_1"/>
+    <child link="imu_block4"/>
+  </joint>
+
+
   <!-- link5 -->
   <link name="link5">
     <collision>
@@ -395,6 +505,59 @@
     <parent link="link5"/>
     <child link="for_link5_2"/>
   </joint>
+
+
+  <!-- imu_block5 -->
+  <link name="imu_block5">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <joint name="for_link5_2_to_imu_block5" type="fixed">
+    <origin xyz="0 0 ${-0.005/2 - for_link5_h/2}" rpy="0 0 0"/>
+    <parent link="for_link5_2"/>
+    <child link="imu_block5"/>
+  </joint>
+
+
+ <!-- laser4 -->
+  <link name="laser4">
+    <collision>     
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <joint name="for_link5_2_to_laser4" type="fixed">
+    <origin xyz="${-link5_w/2/2 - 0.001/2} 0 0" rpy="0 3.14 0"/>
+    <parent link="for_link5_2"/>
+    <child link="laser4"/>
+  </joint>
+
 
   <!-- GRIPPER -->
     
@@ -563,8 +726,8 @@
   </joint>
 
 
-  <!-- laser_right -->
-  <link name="laser_right">
+  <!-- laser3 -->
+  <link name="laser3">
     <collision>     
       <geometry>
         <box size="0.001 0.005 0.002"/>
@@ -581,10 +744,10 @@
     <xacro:default_inertial mass="1e-5"/>
   </link>
 
-  <joint name="for_laser_right_2_to_laser_right" type="fixed">
+  <joint name="for_laser_right_2_to_laser3" type="fixed">
     <origin xyz="${-0.065/4} ${-0.001/2 - 0.002/2} 0" rpy="0 0 -1.57"/>
     <parent link="for_laser_right_2"/>
-    <child link="laser_right"/>
+    <child link="laser3"/>
   </joint>
 
 
@@ -640,8 +803,8 @@
   </joint>
 
 
-  <!-- laser_left -->
-  <link name="laser_left">
+  <!-- laser2 -->
+  <link name="laser2">
     <collision>     
       <geometry>
         <box size="0.001 0.005 0.002"/>
@@ -658,9 +821,9 @@
     <xacro:default_inertial mass="1e-5"/>
   </link>
 
-  <joint name="for_laser_left_2_to_laser_left" type="fixed">
+  <joint name="for_laser_left_2_to_laser2" type="fixed">
     <origin xyz="${-0.065/4} ${0.001/2 + 0.002/2} 0" rpy="0 0 1.57"/>
     <parent link="for_laser_left_2"/>
-    <child link="laser_left"/>
+    <child link="laser2"/>
   </joint>
 </robot>
