@@ -22,7 +22,7 @@ MoveIt
 Модель робота с датчиками.
 ------------
 roslaunch manipulator model.launch - загрузка модели робота с датчиками в окне rviz и в окне gazebo. 
-roslaunch manipulator spawn.launch - загрузка модели робота с датчиками в окне gazebo. 
+roslaunch manipulator gazebo.launch - загрузка модели робота с датчиками в окне gazebo. 
 roslaunch manipulator rviz.launch - загрузка модели робота с датчиками в окне rviz. 
 
 # manipulator_moveit_config
