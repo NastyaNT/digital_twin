@@ -1,0 +1,666 @@
+<?xml version="1.0"?>
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find manipulator)/urdf/model.gazebo" />
+
+  <material name="gray">
+    <color rgba="0.5 0.5 0.5 1"/>
+  </material>
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <material name="light_gray">
+    <color rgba="0.8 0.8 0.8 1"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+
+  <xacro:property name="base1_l" value="0.01"/>
+  <xacro:property name="base1_r" value="0.115"/>
+
+  <xacro:property name="base2_l" value="0.05"/>
+  <xacro:property name="base2_r" value="0.0625"/>
+
+  <xacro:property name="link1_l" value="0.025"/>
+  <xacro:property name="link1_r" value="0.02"/>
+
+  <xacro:property name="for_link2_w" value="0.085"/>
+  <xacro:property name="for_link2_d" value="0.002"/>
+  <xacro:property name="for_link2_h" value="0.07"/>
+
+  <xacro:property name="link2_w" value="0.14"/>
+  <xacro:property name="link2_d" value="0.002"/>
+  <xacro:property name="link2_h" value="0.04"/>
+
+  <xacro:property name="link3_w" value="0.06"/>
+  <xacro:property name="link3_d" value="0.04"/>
+  <xacro:property name="link3_h" value="0.045"/>
+
+  <xacro:property name="link4_l" value="0.1"/>
+  <xacro:property name="link4_r" value="0.01"/>
+
+  <xacro:property name="for_link5_w" value="0.0455"/>
+  <xacro:property name="for_link5_d" value="0.05"/>
+  <xacro:property name="for_link5_h" value="0.035"/>
+
+  <xacro:property name="link5_w" value="0.0595"/>
+  <xacro:property name="link5_d" value="0.05"/>
+  <xacro:property name="link5_h" value="0.035"/>
+
+  <xacro:macro name="default_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </xacro:macro>
+
+  <link name="world"/>
+
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="base1_link"/>
+  </joint>
+
+
+  <!-- base1_link -->
+  <link name="base1_link">
+    <collision>
+      <origin xyz="0 0 ${base1_l/2}" rpy="0 0 0"/>
+      <geometry>
+	    <cylinder length="${base1_l}" radius="${base1_r}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${base1_l/2}" rpy="0 0 0"/>
+      <geometry>
+	    <cylinder length="${base1_l}" radius="${base1_r}"/>
+      </geometry>
+      <material name="gray"/>
+    </visual>
+
+    <xacro:default_inertial mass="3"/>
+  </link>
+
+
+  <!-- base2_link -->
+  <link name="base2_link">
+    <collision>
+      <geometry>
+	    <cylinder length="${base2_l}" radius="${base2_r}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+	    <cylinder length="${base2_l}" radius="${base2_r}"/>
+      </geometry>
+      <material name="gray"/>
+    </visual>
+
+    <xacro:default_inertial mass="1.5"/>
+  </link>
+
+  <!-- base1_to_base2 --> 
+  <joint name="base1_to_base2" type="fixed">
+    <origin xyz="0 0 ${base1_l + base2_l/2}" rpy="0 0 0" />
+    <parent link="base1_link"/>
+    <child link="base2_link"/>
+  </joint>
+
+
+  <!-- link1 -->
+  <link name="link1">
+    <collision>
+      <geometry>
+	    <cylinder length="${link1_l}" radius="${link1_r}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+	    <cylinder length="${link1_l}" radius="${link1_r}"/>
+      </geometry>
+      <material name="gray"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- base2_to_link1 --> 
+  <joint name="base2_to_link1" type="revolute">
+	<safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-1.57" soft_upper_limit="1.396"/>
+    <origin xyz="0 0 ${base2_l/2 + link1_l/2}" rpy="0 0 0" />
+    <parent link="base2_link"/>
+    <child link="link1"/>
+	<axis xyz="0 0 1"/>
+    <limit effort="0.245166" lower="-1.57" upper="1.57" velocity="0.5"/>
+  </joint>
+
+
+  <!-- for_link2_1 -->
+  <link name="for_link2_1">
+    <collision>
+      <geometry>
+        <box size="0.0425 ${for_link2_d} 0.035"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.0425 ${for_link2_d} 0.035"/>
+      </geometry>
+      <material name="light_gray"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- link1_to_for_link2_1 -->  
+  <joint name="link1_to_for_link2_1" type="fixed">
+    <origin xyz="0.00125 ${-link1_r + for_link2_d/2} ${base1_l/2 + link1_l}" rpy="0 0 0" />
+    <parent link="link1"/>
+    <child link="for_link2_1"/>
+  </joint>
+
+
+  <!-- for_link2_2 -->
+  <link name="for_link2_2">
+    <collision>
+      <geometry>
+        <box size="0.06 ${for_link2_d} 0.04"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.06 ${for_link2_d} 0.04"/>
+      </geometry>
+      <material name="light_gray"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- for_link2_1_to_for_link2_2 -->  
+  <joint name="for_link2_1_to_for_link2_2" type="fixed">
+    <origin xyz="${-0.06/2 + 0.00125} 0 ${0.04/2 - 0.0025}" rpy="0 0.7854 0" />
+    <parent link="for_link2_1"/>
+    <child link="for_link2_2"/>
+  </joint>
+
+
+  <!-- link2 -->
+  <link name="link2">
+    <collision> 
+    <origin xyz="${0.017 + 0.0125} 0 0.046" rpy="0 ${-0.7854 - 0.2} 0"/>
+      <geometry>
+        <box size="${link2_w} ${link2_d} ${link2_h}"/> 
+      </geometry>
+    </collision>
+
+    <visual>
+    <origin xyz="${0.017 + 0.0125} 0 0.046" rpy="0 ${-0.7854 - 0.2} 0"/>
+      <geometry>
+        <box size="${link2_w} ${link2_d} ${link2_h}"/> 
+      </geometry>
+      <material name="light_gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- for_link2_to_link2 -->
+  <joint name="for_link2_2_to_link2" type="revolute">
+    <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-3.14" soft_upper_limit="0"/>
+    <origin xyz="-0.017 ${for_link2_d/2 + link2_d/2} 0.004" rpy="0 0 0"/>
+    <parent link="for_link2_2"/>
+    <child link="link2"/>
+    <limit effort="0.245166" lower="-3.14" upper="0" velocity="0.5"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+
+  <!-- imu_block -->
+  <link name="imu_block">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <joint name="link2_to_imu_block" type="fixed">
+    <origin xyz="${0.017 + 0.0125} ${-link2_d + link1_r} 0.046" rpy="0 0 0"/>
+    <parent link="link2"/>
+    <child link="imu_block"/>
+  </joint>
+
+
+  <!-- link3 -->
+  <link name="link3">
+    <collision>
+    <origin xyz="0 ${link3_d/2 - link2_d/2} 0.015" rpy="0 0 0"/>
+      <geometry>
+        <box size="${link3_w} ${link3_d} ${link3_h}"/>
+      </geometry> 
+    </collision>
+
+    <visual>
+    <origin xyz="0 ${link3_d/2 - link2_d/2} 0.015" rpy="0 0 0"/>
+      <geometry>
+        <box size="${link3_w} ${link3_d} ${link3_h}"/>
+      </geometry> 
+      <material name="gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- link2_to_link3 -->
+  <joint name="link2_to_link3" type="revolute">
+    <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="0" soft_upper_limit="3.14"/>
+    <origin xyz="0.065 0 0.1" rpy="0 -0.7854 0"/>
+    <parent link="link2"/>
+    <child link="link3"/>
+    <limit effort="0.245166" lower="0" upper="3.355" velocity="0.5"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+
+ <!-- link4 -->
+  <link name="link4">
+    <collision>
+    <origin xyz="0 0 0" rpy="0 -1.57 0"/>
+      <geometry>
+        <cylinder length="${link4_l}" radius="${link4_r}"/>
+      </geometry> 
+    </collision>
+
+    <visual>
+    <origin xyz="0 0 0" rpy="0 -1.57 0"/>
+      <geometry>
+        <cylinder length="${link4_l}" radius="${link4_r}"/>
+      </geometry> 
+      <material name="light_gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- link3_to_link4 -->
+  <joint name="link3_to_link4" type="revolute">	
+    <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-1.57" soft_upper_limit="1.57"/>
+    <origin xyz="${-link3_w/2 - link4_l/2} ${link3_d/2} ${link4_r*2}" rpy="0 0 0"/>
+    <parent link="link3"/>
+    <child link="link4"/>
+    <limit effort="0.245166" lower="-1.57" upper="1.57" velocity="0.5"/>
+    <axis xyz="1 0 0"/>
+  </joint>
+
+
+  <!-- for_link5_1 -->
+  <link name="for_link5_1">
+    <collision>
+      <geometry>
+        <box size="${for_link5_w} ${for_link5_d} ${for_link5_h}"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="${for_link5_w} ${for_link5_d} ${for_link5_h}"/> 
+      </geometry> 
+      <material name="gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- link4_to_for_link5_1 -->
+  <joint name="link4_to_for_link5_1" type="fixed">
+    <origin xyz="${-for_link5_w/2 - link4_l/2} 0 0" rpy="0 0 0"/> 
+    <parent link="link4"/>
+    <child link="for_link5_1"/>
+  </joint>
+
+
+  <!-- link5 -->
+  <link name="link5">
+    <collision>
+    <origin xyz="${-link5_w/2/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${link5_w/2} ${link5_d} ${link5_h}"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+    <origin xyz="${-link5_w/2/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${link5_w/2} ${link5_d} ${link5_h}"/> 
+      </geometry> 
+      <material name="gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- for_link5_1_to_link5 -->
+  <joint name="for_link5_1_to_link5" type="revolute">
+    <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-1.57" soft_upper_limit="1.57"/>	
+    <origin xyz="${-for_link5_w/2} 0 0" rpy="0 0 0"/> 
+    <parent link="for_link5_1"/>
+    <child link="link5"/>
+    <limit effort="0.245166" lower="-1.57" upper="1.57" velocity="0.5"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+
+  <!-- for_link5_2 -->
+  <link name="for_link5_2">
+    <collision>
+      <geometry>
+        <box size="${link5_w/2} ${link5_d} ${link5_h}"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="${link5_w/2} ${link5_d} ${link5_h}"/> 
+      </geometry> 
+      <material name="gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- link5_to_for_link5_2 -->
+  <joint name="link5_to_for_link5_2" type="fixed">
+    <origin xyz="${-link5_w/2 - link5_w/2/2} 0 0" rpy="0 0 0"/>
+    <parent link="link5"/>
+    <child link="for_link5_2"/>
+  </joint>
+
+  <!-- GRIPPER -->
+    
+  <!-- right_finger -->
+  <link name="right_finger">
+    <collision>
+    <origin xyz="${-0.065/3 + link5_d/6 - link5_d/3} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.065 0.0075 0.002"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+    <origin xyz="${-0.065/3 + link5_d/6 - link5_d/3} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.065 0.0075 0.002"/> 
+      </geometry> 
+      <material name="light_gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- for_link5_2_to_right_finger -->
+  <joint name="for_link5_2_to_right_finger" type="revolute">	
+    <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-1.57" soft_upper_limit="0"/>
+    <origin xyz="0 ${link5_d/2 - 0.01975 + 0.0075/2 + 0.0075/4 + 0.0004 - 0.0075/2} ${link5_h/2 + 0.002/2}" rpy="0 0 0"/>
+    <parent link="for_link5_2"/>
+    <child link="right_finger"/>
+    <limit effort="0.980665" lower="-1.57" upper="0" velocity="0.5"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+
+  <!-- right_tip -->
+  <link name="right_tip">
+    <collision> 
+      <geometry>
+        <box size="0.03 0.0075 0.004"/> 
+      </geometry> 
+    </collision>
+   
+    <visual>
+      <geometry>
+        <box size="0.03 0.0075 0.004"/> 
+      </geometry> 
+      <material name="light_gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- right_finger_to_right_tip -->
+  <joint name="right_finger_to_right_tip" type="fixed">
+    <origin xyz="${-0.065/2 - 0.065/2} ${-0.0075/2} 0.001" rpy="0 0 0"/> 
+    <parent link="right_finger"/>
+    <child link="right_tip"/>
+  </joint>
+
+  <!-- left_finger -->
+  <link name="left_finger">
+    <collision>
+    <origin xyz="${-0.065/3 + link5_d/6 - link5_d/3} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.065 0.0075 0.002"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+    <origin xyz="${-0.065/3 + link5_d/6 - link5_d/3} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.065 0.0075 0.002"/> 
+      </geometry> 
+      <material name="light_gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- for_link5_2_to_left_finger -->
+  <joint name="for_link5_2_to_left_finger" type="revolute">	
+    <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="0" soft_upper_limit="1.57"/>
+    <origin xyz="0 ${-link5_d/2 + 0.01975 - 0.0075/2 - 0.0075/4 - 0.0004 +0.0075/2} ${link5_h/2 + 0.002/2}" rpy="0 0 0"/>
+    <parent link="for_link5_2"/>
+    <child link="left_finger"/>
+    <limit effort="0.980665" lower="0" upper="1.57" velocity="0.5"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+
+  <!-- left_tip -->
+  <link name="left_tip">
+    <collision> 
+      <geometry>
+        <box size="0.03 0.0075 0.004"/> 
+      </geometry> 
+    </collision>
+   
+    <visual>
+      <geometry>
+        <box size="0.03 0.0075 0.004"/> 
+      </geometry> 
+      <material name="light_gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- left_finger_to_left_tip -->
+  <joint name="left_finger_to_left_tip" type="fixed">
+    <origin xyz="${-0.065/2 - 0.065/2} ${0.0075/2} 0.001" rpy="0 0 0"/> 
+    <parent link="left_finger"/>
+    <child link="left_tip"/>
+  </joint>
+
+
+  <!-- for_laser_right_1 -->
+  <link name="for_laser_right_1">
+    <collision>
+      <geometry>
+        <box size="0.0075 0.025 0.002"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.0075 0.025 0.002"/> 
+      </geometry> 
+      <material name="gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- right_finger_to_for_laser_right_1 -->
+  <joint name="right_finger_to_for_laser_right_1" type="fixed">	
+    <origin xyz="${-0.065/2} ${0.015/2 - 0.0075/2 + 0.0075/4} ${-0.002/2 -0.002/2}" rpy="0 0 0"/>
+    <parent link="right_finger"/>
+    <child link="for_laser_right_1"/>
+  </joint>
+
+
+  <!-- for_laser_right_2 -->
+  <link name="for_laser_right_2">
+    <collision>
+      <geometry>
+        <box size="0.065 0.002 0.01"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.065 0.002 0.01"/> 
+      </geometry> 
+      <material name="gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- for_laser_right_1_to_for_laser_right_2 -->
+  <joint name="for_laser_right_1_to_for_laser_right_2" type="fixed">	
+    <origin xyz="${-0.065/2 + 0.0075/2} ${0.025/2 - 0.002/2} ${-0.01/2 - 0.002/2}" rpy="0 0 0"/>
+    <parent link="for_laser_right_1"/>
+    <child link="for_laser_right_2"/>
+  </joint>
+
+
+  <!-- laser_right -->
+  <link name="laser_right">
+    <collision>     
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <joint name="for_laser_right_2_to_laser_right" type="fixed">
+    <origin xyz="${-0.065/4} ${-0.001/2 - 0.002/2} 0" rpy="0 0 -1.57"/>
+    <parent link="for_laser_right_2"/>
+    <child link="laser_right"/>
+  </joint>
+
+
+  <!-- for_laser_left_1 -->
+  <link name="for_laser_left_1">
+    <collision>
+      <geometry>
+        <box size="0.0075 0.025 0.002"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.0075 0.025 0.002"/> 
+      </geometry> 
+      <material name="gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- left_finger_to_for_laser_left_1 -->
+  <joint name="left_finger_to_for_laser_left_1" type="fixed">	
+    <origin xyz="${-0.065/2} ${-0.015/2 + 0.0075/2 - 0.0075/4} ${-0.002/2 -0.002/2}" rpy="0 0 0"/>
+    <parent link="left_finger"/>
+    <child link="for_laser_left_1"/>
+  </joint>
+
+
+  <!-- for_laser_left_2 -->
+  <link name="for_laser_left_2">
+    <collision>
+      <geometry>
+        <box size="0.065 0.002 0.01"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.065 0.002 0.01"/> 
+      </geometry> 
+      <material name="gray"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <!-- for_laser_left_1_to_for_laser_left_2 -->
+  <joint name="for_laser_left_1_to_for_laser_left_2" type="fixed">	
+    <origin xyz="${-0.065/2 + 0.0075/2} ${-0.025/2 + 0.002/2} ${-0.01/2 - 0.002/2}" rpy="0 0 0"/>
+    <parent link="for_laser_left_1"/>
+    <child link="for_laser_left_2"/>
+  </joint>
+
+
+  <!-- laser_left -->
+  <link name="laser_left">
+    <collision>     
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+  <joint name="for_laser_left_2_to_laser_left" type="fixed">
+    <origin xyz="${-0.065/4} ${0.001/2 + 0.002/2} 0" rpy="0 0 1.57"/>
+    <parent link="for_laser_left_2"/>
+    <child link="laser_left"/>
+  </joint>
+</robot>
