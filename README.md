@@ -1,4 +1,34 @@
- # my_robot_manipulation
+Эксперименты
+==========================================
+MoveIt
+------------
+1) 1й терминал: roslaunch manipulator_moveit_config demo.launch - загрузка модели
+2) 2й терминал: rosrun my_robot_manipulation vitamins_capture_transfer - загрузка программы для экспериментов
+3) Нажимаем дважды next на RvizVisualToolsGui
+4) Выбираем группу планирования на вкладке planning->planning group плагина MotionPlanning.Передвигаем звенья на вкладке joints плагина MotionPlanning. На вкладке planning нажимаем кнопку plan&execute.
+5) Нажимаем next на RvizVisualToolsGui
+6) Повторяем пункт 4)
+7) повторяем пункт 5)
+
+Данные с датчиков
+------------
+1) 1й терминал: roslaunch manipulator model.launch - загрузка модели робота с датчиками в окне rviz и в окне gazebo
+2) 2й терминал: 
+
+
+# manipulator
+Модель робота с датчиками.
+------------
+roslaunch manipulator model.launch - загрузка модели робота с датчиками в окне rviz и в окне gazebo. 
+roslaunch manipulator spawn.launch - загрузка модели робота с датчиками в окне gazebo. 
+roslaunch manipulator rviz.launch - загрузка модели робота с датчиками в окне rviz. 
+
+# manipulator_moveit_config
+Пакет с моделью робота для MoveIt.
+------------
+roslaunch manipulator_moveit_config demo.launch - загрузка модели робота с плагином MotionPlanning для экспериментов.
+
+# my_robot_manipulation
 
 box_capture_rise.cpp:
 ===========================================
