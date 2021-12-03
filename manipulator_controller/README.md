@@ -1,6 +1,3 @@
-Rviz:
-roslaunch description rviz.launch
-
 Gazebo: 
 roslaunch gazebo world.launch
 
