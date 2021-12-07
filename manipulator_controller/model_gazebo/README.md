@@ -1,0 +1,1 @@
+roslaunch model_gazebo model_world.launch
