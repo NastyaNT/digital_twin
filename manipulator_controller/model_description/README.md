@@ -1,1 +1,0 @@
-roslaunch model_description model_rviz.launch
