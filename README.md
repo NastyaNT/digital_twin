@@ -1,37 +1,32 @@
-Эксперименты
-==========================================
-MoveIt
+# description
+Модель робота с датчиками и контроллерами.
+===========================================
+Управление роботом
 ------------
-1) 1й терминал: roslaunch manipulator_moveit_config demo.launch - загрузка модели
-2) 2й терминал: rosrun my_robot_manipulation vitamins_capture_transfer - загрузка программы для экспериментов
-3) Нажимаем дважды next на RvizVisualToolsGui
-4) Выбираем группу планирования на вкладке planning->planning group плагина MotionPlanning.Передвигаем звенья на вкладке joints плагина MotionPlanning. На вкладке planning нажимаем кнопку plan&execute.
-5) Нажимаем next на RvizVisualToolsGui
-6) Повторяем пункт 4)
-7) повторяем пункт 5)
+1) 1й терминал: roslaunch description gazebo.launch - загрузка модели робота с датчиками и контроллерами в окне gazebo. 
+
+Вариант 1
+2) 2й терминал: rosrun rqt_gui rqt_gui 
+3) После открытия переходим в Plugins -> Topics -> Message Publisher. В Topic вводим /robot/*название звена*/command (пример: /robot/joint1/command). В Freq ставим 50. Нажимаем +. После добавлеия топика в поле, раскрываем его, нажимая на треугольник. В поле expression вводим значение в радианах. И ставим галочку в квадратике перед названием топика.
+
+Вриант 2
+2) Управление через консоль (2й терминал): rostopic pub /robot/*название звена*/command std_msgs/Float64 "data: *значение в радианах*" (пример: rostopic pub /robot/joint1/command std_msgs/Float64 "data: -1")
 
 Сбор данных с датчиков
 ------------
-1) 1й терминал: roslaunch manipulator model.launch - загрузка модели робота с датчиками в окне rviz и в окне gazebo
-2) 2й терминал: rostopic list. Проверяем наличие датчиков (/robot/laser_left/scan, /robot/laser_right/scan, /imu/data)
-3) 2й терминал: rostopic echo *название* -n1 > *имя файла, куда запишется вывод* - единоразовая запись данных в файл
+1) 1й терминал: roslaunch description gazebo.launch - загрузка модели робота с датчиками и контроллерами в окне gazebo. 
+2) 2й терминал: rostopic echo *название* -n1 > *имя файла, куда запишется вывод* - единоразовая запись данных в файл (пример: rostopic echo imu1/data -n1 > imu1_experiment1_1_before)
 
-
-
-# manipulator
-Модель робота с датчиками.
-------------
-* roslaunch manipulator model.launch - загрузка модели робота с датчиками в окне rviz и в окне gazebo. 
-* roslaunch manipulator gazebo.launch - загрузка модели робота с датчиками в окне gazebo. 
-* roslaunch manipulator rviz.launch - загрузка модели робота с датчиками в окне rviz. 
-
-# manipulator_moveit_config
+# moveit_config
 Пакет с моделью робота для MoveIt.
 ------------
-roslaunch manipulator_moveit_config demo.launch - загрузка модели робота с плагином MotionPlanning для экспериментов.
+* roslaunch moveit_config demo.launch - загрузка модели робота с плагином MotionPlanning для экспериментов.
+
+* По https://roboticscasual.com/ros-tutorial-how-to-create-a-moveit-config-for-the-ur5-and-a-gripper/ : 
+roslaunch moveit_config demo_gazebo.launch - запуск Moveit и Gazebo, загрузка датчиков и контроллеров.
+В терминале возникает предупреждение: Controller Spawner couldn't find the expected controller_manager ROS interface
 
 # my_robot_manipulation
-
 box_capture_rise.cpp:
 ===========================================
 Проведение экспериментов по захвату и поднятию коробки.
