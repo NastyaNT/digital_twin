@@ -6,10 +6,12 @@
 1. 1й терминал: roslaunch description gazebo.launch - загрузка модели робота с датчиками и контроллерами в окне gazebo. 
 
 Вариант 1
+------------
 2. 2й терминал: rosrun rqt_gui rqt_gui 
 3. После открытия переходим в Plugins -> Topics -> Message Publisher. В Topic вводим /robot/*название звена*/command (пример: /robot/joint1/command). В Freq ставим 50. Нажимаем +. После добавлеия топика в поле, раскрываем его, нажимая на треугольник. В поле expression вводим значение в радианах. И ставим галочку в квадратике перед названием топика.
 
 Вриант 2
+------------
 2. Управление через консоль (2й терминал): rostopic pub /robot/*название звена*/command std_msgs/Float64 "data: *значение в радианах*" (пример: rostopic pub /robot/joint1/command std_msgs/Float64 "data: -1")
 
 Сбор данных с датчиков
