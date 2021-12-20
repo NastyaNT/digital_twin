@@ -1,0 +1,1142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- добавление цветов -->
+  <material name="grey">
+    <color rgba="0.5 0.5 0.5 1"/>
+  </material>
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <material name="light_grey">
+    <color rgba="0.8 0.8 0.8 1"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+
+
+
+  <!-- base1_link: высота цилиндра в метрах -->
+  <xacro:property name="base1_l" value="0.01"/>
+  <!-- base1_link: радиус цилиндра в метрах -->
+  <xacro:property name="base1_r" value="0.115"/>
+
+
+  <!-- base2_link: высота цилиндра в метрах -->
+  <xacro:property name="base2_l" value="0.05"/>
+  <!-- base2_link: радиус цилиндра в метрах-->
+  <xacro:property name="base2_r" value="0.0625"/>
+
+
+  <!-- link1: высота цилиндра в метрах -->
+  <xacro:property name="link1_l" value="0.025"/>
+  <!-- link1: радиус цилиндра в метрах -->
+  <xacro:property name="link1_r" value="0.02"/>
+
+
+  <!-- ширина в метрах -->
+  <xacro:property name="for_link2_w" value="0.085"/>
+  <!-- длина в метрах -->
+  <xacro:property name="for_link2_d" value="0.002"/>
+  <!-- высота в метрах-->
+  <xacro:property name="for_link2_h" value="0.07"/>
+
+
+  <!-- link2: ширина в метрах -->
+  <xacro:property name="link2_w" value="0.14"/>
+  <!-- link2: длина в метрах -->
+  <xacro:property name="link2_d" value="0.002"/>
+  <!-- link2: высота в метрах -->
+  <xacro:property name="link2_h" value="0.04"/>
+
+
+  <!-- link3: ширина в метрах -->
+  <xacro:property name="link3_w" value="0.06"/>
+  <!-- link3: длина в метрах -->
+  <xacro:property name="link3_d" value="0.04"/>
+  <!-- link3: высота в метрах -->
+  <xacro:property name="link3_h" value="0.045"/>
+
+
+  <!-- link4: высота цилиндра в метрах -->
+  <xacro:property name="link4_l" value="0.1"/>
+  <!-- link4: радиус цилиндра в метрах -->
+  <xacro:property name="link4_r" value="0.01"/>
+
+
+  <!-- ширина в метрах -->
+  <xacro:property name="for_link5_w" value="0.0455"/>
+  <!-- длина в метрах -->
+  <xacro:property name="for_link5_d" value="0.05"/>
+  <!-- высота в метрах -->
+  <xacro:property name="for_link5_h" value="0.035"/>
+
+
+  <!-- link5: ширина в метрах -->
+  <xacro:property name="link5_w" value="0.0595"/>
+  <!-- link5: длина в метрах -->
+  <xacro:property name="link5_d" value="0.05"/>
+  <!-- link5: высота в метрах -->
+  <xacro:property name="link5_h" value="0.035"/>
+  
+  
+  
+  <!-- определение динамики суставов -->
+  <xacro:property name="joint_damping" value="0.0"/>
+  <xacro:property name="joint_friction" value="0.0"/>
+  
+
+
+  <!-- блок инерции, где входным парамметром является масса звена -->
+  <xacro:macro name="default_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </xacro:macro>
+  
+  
+  
+  
+  <link name="world"/>
+
+
+  <!-- прикрепление неподвижного основания робота к миру-->
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="base1_link"/>
+  </joint>
+
+
+
+  <!-- base1_link — неподвижное звено основания, находится дальше от link1 -->
+  <link name="base1_link">
+    <collision>
+      <origin xyz="0 0 ${base1_l/2}" rpy="0 0 0"/>
+      <geometry>
+	    <cylinder length="${base1_l}" radius="${base1_r}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${base1_l/2}" rpy="0 0 0"/>
+      <geometry>
+	    <cylinder length="${base1_l}" radius="${base1_r}"/>
+      </geometry>
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="4"/>
+  </link>
+
+
+
+  <!-- base2_link — неподвижное звено основания, находится ближе к link1 -->
+  <link name="base2_link">
+    <collision>
+      <geometry>
+	<cylinder length="${base2_l}" radius="${base2_r}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+	<cylinder length="${base2_l}" radius="${base2_r}"/>
+      </geometry>
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="2"/>
+  </link>
+
+
+  <!-- base1_to_base2 — фиксированное соединение --> 
+  <joint name="base1_to_base2" type="fixed">
+    <parent link="base1_link"/>
+    <child link="base2_link"/>
+    <origin xyz="0 0 ${base1_l + base2_l/2}" rpy="0 0 0" />
+  </joint>
+
+
+
+  <!-- link1 — звено, которое осуществляет поворот основания манипулятора влево/вправо -->
+  <link name="link1">
+    <collision>
+      <geometry>
+	<cylinder length="${link1_l}" radius="${link1_r}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+	<cylinder length="${link1_l}" radius="${link1_r}"/>
+      </geometry>
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- base2_to_link1 — подвижное соединение --> 
+  <joint name="base2_to_link1" type="revolute">
+    <parent link="base2_link"/>
+    <child link="link1"/>
+    <origin xyz="0 0 ${base2_l/2 + link1_l/2}" rpy="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="0.245166" lower="-1.57" upper="1.57" velocity="3.15"/>
+    <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+  </joint>
+
+
+
+  <!-- imu_block1 — внешняя часть imu-датчика, которая находится рядом с link1 -->
+  <link name="imu_block1">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- link1_to_imu_block1 — фиксированное соединение --> 
+  <joint name="link1_to_imu_block1" type="fixed">
+    <parent link="link1"/>
+    <child link="imu_block1"/>
+    <origin xyz="${link1_r/2 + 0.015 + 0.015/2} 0 ${link1_l/2 + 0.005/2}" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- for_link2_1 — неподвижное звено, которое находится ближе к link1-->
+  <link name="for_link2_1">
+    <collision>
+      <geometry>
+        <box size="0.0425 ${for_link2_d} 0.035"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.0425 ${for_link2_d} 0.035"/>
+      </geometry>
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- link1_to_for_link2_1 — фиксированное соединение -->  
+  <joint name="link1_to_for_link2_1" type="fixed">
+    <parent link="link1"/>
+    <child link="for_link2_1"/>
+    <origin xyz="0.00125 ${-link1_r + for_link2_d/2} ${base1_l/2 + link1_l}" rpy="0 0 0" />
+  </joint>
+
+
+
+  <!-- for_link2_2 — неподвижное звено, которое находится ближе к link2 -->
+  <link name="for_link2_2">
+    <collision>
+      <geometry>
+        <box size="0.06 ${for_link2_d} 0.04"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.06 ${for_link2_d} 0.04"/>
+      </geometry>
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_link2_1_to_for_link2_2 — фиксированное соединение -->  
+  <joint name="for_link2_1_to_for_link2_2" type="fixed">
+    <parent link="for_link2_1"/>
+    <child link="for_link2_2"/>
+    <origin xyz="${-0.06/2 + 0.00125} 0 ${0.04/2 - 0.0025}" rpy="0 0.7854 0" />
+  </joint>
+
+
+
+  <!-- link2 — звено, которое осуществляет подъем/спуск конструкции ближе к основанию -->
+  <link name="link2">
+    <collision> 
+    <origin xyz="${0.017 + 0.0125} 0 0.046" rpy="0 ${-0.7854 - 0.2} 0"/>
+      <geometry>
+        <box size="${link2_w} ${link2_d} ${link2_h}"/> 
+      </geometry>
+    </collision>
+
+    <visual>
+    <origin xyz="${0.017 + 0.0125} 0 0.046" rpy="0 ${-0.7854 - 0.2} 0"/>
+      <geometry>
+        <box size="${link2_w} ${link2_d} ${link2_h}"/> 
+      </geometry>  
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_link2_to_link2 — подвижное соединение -->
+  <joint name="for_link2_2_to_link2" type="revolute">
+    <parent link="for_link2_2"/>
+    <child link="link2"/>
+    <origin xyz="-0.017 ${for_link2_d/2 + link2_d/2} 0.004" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0.245166" lower="-3.14" upper="0" velocity="3.15"/>
+    <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+  </joint>
+
+
+
+  <!-- imu_block2 — внешняя часть imu-датчика, которая находится на link2 -->
+  <link name="imu_block2">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- link2_to_imu_block2 — фиксированное соединение --> 
+  <joint name="link2_to_imu_block2" type="fixed">
+    <parent link="link2"/>
+    <child link="imu_block2"/>
+    <origin xyz="0 ${0.025/2 + link2_d/2} 0" rpy="0 ${3.14/2 + 3.14/5.5 + 3.14} 0"/>
+  </joint>
+
+
+
+  <!-- laser1 — внешняя часть лазерного дальномера, которая находится на link2 -->
+  <link name="laser1">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- link2_to_laser1 — фиксированное соединение -->
+  <joint name="link2_to_laser1" type="fixed">
+    <parent link="link2"/>
+    <child link="laser1"/>
+    <origin xyz="${0.017 + 0.0125} ${-link2_d + link1_r} 0.046" rpy="0 ${3.14/2 + 3.14/5.5 + 3.14/2} 0"/>
+  </joint>
+
+
+  <!-- link3 — звено, которое осуществляет подъем/спуск конструкции ближе к захвату -->
+  <link name="link3">
+    <collision>
+    <origin xyz="0 ${link3_d/2 - link2_d/2} 0.015" rpy="0 0 0"/>
+      <geometry>
+        <box size="${link3_w} ${link3_d} ${link3_h}"/>
+      </geometry> 
+    </collision>
+
+    <visual>
+    <origin xyz="0 ${link3_d/2 - link2_d/2} 0.015" rpy="0 0 0"/>
+      <geometry>
+        <box size="${link3_w} ${link3_d} ${link3_h}"/>
+      </geometry> 
+      <material name="light_grey"/> 
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- link2_to_link3 — подвижное соединение -->
+  <joint name="link2_to_link3" type="revolute">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <origin xyz="0.065 0 0.1" rpy="0 -0.7854 0"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0.245166" lower="0" upper="3.355" velocity="3.15"/>
+    <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+  </joint>
+
+
+
+  <!-- imu_block3 — внешняя часть imu-датчика, которая находится на link3 -->
+  <link name="imu_block3">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.025 0.015 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.025 0.015 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- link3_to_imu_block3 — фиксированное соединение -->
+  <joint name="link3_to_imu_block3" type="fixed">
+    <parent link="link3"/>
+    <child link="imu_block3"/>
+    <origin xyz="${-0.025/2} ${link3_d/2} ${link3_h - 0.005}" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- link4 — звено, которое осуществляет поворот захвата влево/вправо -->
+  <link name="link4">
+    <collision>
+    <origin xyz="0 0 0" rpy="0 -1.57 0"/>
+      <geometry>
+        <cylinder length="${link4_l}" radius="${link4_r}"/>
+      </geometry> 
+    </collision>
+
+    <visual>
+    <origin xyz="0 0 0" rpy="0 -1.57 0"/>
+      <geometry>
+        <cylinder length="${link4_l}" radius="${link4_r}"/>
+      </geometry> 
+      <material name="light_grey"/>  
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- link3_to_link4 — подвижное соединение -->
+  <joint name="link3_to_link4" type="revolute">	
+    <parent link="link3"/>
+    <child link="link4"/>
+    <origin xyz="${-link3_w/2 - link4_l/2} ${link3_d/2} ${link4_r*2}" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="0.245166" lower="-1.57" upper="1.57" velocity="3.15"/>
+    <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+  </joint>
+
+
+
+  <!-- for_link5_1 — неподвижное звено, которое находится рядом с link5 ближе к основанию -->
+  <link name="for_link5_1">
+    <collision>
+      <geometry>
+        <box size="${for_link5_w} ${for_link5_d} ${for_link5_h}"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="${for_link5_w} ${for_link5_d} ${for_link5_h}"/> 
+      </geometry>  
+      <material name="light_grey"/> 
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- link4_to_for_link5_1 — фиксированное соединение -->
+  <joint name="link4_to_for_link5_1" type="fixed">
+    <parent link="link4"/>
+    <child link="for_link5_1"/>
+    <origin xyz="${-for_link5_w/2 - link4_l/2} 0 0" rpy="0 0 0"/> 
+  </joint>
+
+
+
+  <!-- imu_block4 — внешняя часть imu-датчика, которая находится рядом с link5 ближе к основанию -->
+  <link name="imu_block4">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_link5_1_to_imu_block4 — фиксированное соединение -->
+  <joint name="for_link5_1_to_imu_block4" type="fixed">
+    <parent link="for_link5_1"/>
+    <child link="imu_block4"/>
+    <origin xyz="0 0 ${0.005/2 + for_link5_h/2}" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- link5 —  звено, которое осуществляет движение захвата вверх/вниз -->
+  <link name="link5">
+    <collision>
+    <origin xyz="${-link5_w/2/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${link5_w/2} ${link5_d} ${link5_h}"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+    <origin xyz="${-link5_w/2/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${link5_w/2} ${link5_d} ${link5_h}"/> 
+      </geometry> 
+      <material name="light_grey"/>  
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_link5_1_to_link5 — подвижное соединение -->
+  <joint name="for_link5_1_to_link5" type="revolute">	
+    <parent link="for_link5_1"/>
+    <child link="link5"/>
+    <origin xyz="${-for_link5_w/2} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0.245166" lower="-1.57" upper="1.57" velocity="3.15"/>
+    <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+  </joint>
+
+
+
+  <!-- for_link5_2 — неподвижное звено, которое находится рядом с link5 ближе к захвату-->
+  <link name="for_link5_2">
+    <collision>
+      <geometry>
+        <box size="${link5_w/2} ${link5_d} ${link5_h}"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="${link5_w/2} ${link5_d} ${link5_h}"/> 
+      </geometry>    
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- link5_to_for_link5_2 — фиксированное соединение -->
+  <joint name="link5_to_for_link5_2" type="fixed">
+    <parent link="link5"/>
+    <child link="for_link5_2"/>
+    <origin xyz="${-link5_w/2 - link5_w/2/2} 0 0" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- imu_block5 — внешняя часть imu-датчика, которая находится рядом с link5 ближе к захвату -->
+  <link name="imu_block5">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.025 0.005"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_link5_2_to_imu_block5 — фиксированное соединение -->
+  <joint name="for_link5_2_to_imu_block5" type="fixed">
+    <parent link="for_link5_2"/>
+    <child link="imu_block5"/>
+    <origin xyz="0 0 ${-0.005/2 - for_link5_h/2}" rpy="0 0 0"/>
+  </joint>
+
+
+
+ <!-- laser4 — внешняя часть лазерного дальномера, которая находится рядом с link5-->
+  <link name="laser4">
+    <collision>     
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_link5_2_to_laser4 — фиксированное соединение -->
+  <joint name="for_link5_2_to_laser4" type="fixed">
+    <parent link="for_link5_2"/>
+    <child link="laser4"/>
+    <origin xyz="${-link5_w/2/2 - 0.001/2} 0 0" rpy="0 3.14 0"/>
+  </joint>
+
+
+
+  <!-- 
+  ______________________ Захват_________________________ 
+  -->
+    
+  <!-- right_finger — правый палец захвата -->
+  <link name="right_finger">
+    <visual>
+    <origin xyz="${-0.065/3 + link5_d/6 - link5_d/3} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.065 0.0075 0.002"/> 
+      </geometry>   
+      <material name="light_grey"/> 
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+  
+  
+  <!-- for_link5_2_to_right_finger — подвижное соединение -->
+  <joint name="for_link5_2_to_right_finger" type="revolute">	
+    <parent link="for_link5_2"/>
+    <child link="right_finger"/>
+    <origin xyz="0 ${link5_d/2 - 0.01975 + 0.0075/2 + 0.0075/4 + 0.0004 - 0.0075/2} ${link5_h/2 + 0.002/2}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0.980665" lower="-1.57" upper="0" velocity="3.15"/>
+    <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+  </joint>
+
+
+
+  <!-- right_tip — конец правого пальза захвата -->
+  <link name="right_tip">
+    <visual>
+      <geometry>
+        <box size="0.03 0.0075 0.004"/> 
+      </geometry> 
+      <material name="light_grey"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+  
+
+  <!-- right_finger_to_right_tip — фиксированное соединение -->
+  <joint name="right_finger_to_right_tip" type="fixed">
+    <parent link="right_finger"/>
+    <child link="right_tip"/>
+    <origin xyz="${-0.065/2 - 0.065/2} ${-0.0075/2} 0.001" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- left_finger — левый палец захвата -->
+  <link name="left_finger">
+    <visual>
+    <origin xyz="${-0.065/3 + link5_d/6 - link5_d/3} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.065 0.0075 0.002"/> 
+      </geometry>   
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_link5_2_to_left_finger — подвижное соединение -->
+  <joint name="for_link5_2_to_left_finger" type="revolute">	
+    <parent link="for_link5_2"/>
+    <child link="left_finger"/>
+    <origin xyz="0 ${-link5_d/2 + 0.01975 - 0.0075/2 - 0.0075/4 - 0.0004 +0.0075/2} ${link5_h/2 + 0.002/2}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0.980665" lower="0" upper="1.57" velocity="3.14"/>
+    <dynamics damping="${joint_damping}" friction="${joint_friction}"/>
+  </joint>
+
+
+
+  <!-- left_tip — конец левого пальца захвата-->
+  <link name="left_tip"> 
+    <visual>
+      <geometry>
+        <box size="0.03 0.0075 0.004"/> 
+      </geometry>   
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- left_finger_to_left_tip — фиксированное соединение -->
+  <joint name="left_finger_to_left_tip" type="fixed">
+    <parent link="left_finger"/>
+    <child link="left_tip"/>
+    <origin xyz="${-0.065/2 - 0.065/2} ${0.0075/2} 0.001" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- for_laser_right_1 — блок для laser3 ближе к right_finger-->
+  <link name="for_laser_right_1">
+    <collision>
+      <geometry>
+        <box size="0.0075 0.025 0.002"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.0075 0.025 0.002"/> 
+      </geometry> 
+      <material name="light_grey"/>   
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- right_finger_to_for_laser_right_1 — фиксированное соединение -->
+  <joint name="right_finger_to_for_laser_right_1" type="fixed">	
+    <parent link="right_finger"/>
+    <child link="for_laser_right_1"/>
+    <origin xyz="${-0.065/2} ${0.015/2 - 0.0075/2 + 0.0075/4} ${-0.002/2 -0.002/2}" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- for_laser_right_2 — блок для laser3 дальше от right_finger -->
+  <link name="for_laser_right_2">
+    <collision>
+      <geometry>
+        <box size="0.065 0.002 0.01"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.065 0.002 0.01"/> 
+      </geometry>  
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_laser_right_1_to_for_laser_right_2 — фиксированное соединение -->
+  <joint name="for_laser_right_1_to_for_laser_right_2" type="fixed">	
+    <parent link="for_laser_right_1"/>
+    <child link="for_laser_right_2"/>
+    <origin xyz="${-0.065/2 + 0.0075/2} ${0.025/2 - 0.002/2} ${-0.01/2 - 0.002/2}" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- laser3 — внешняя часть лазерного дальномера, которая находится рядом с right_finger -->
+  <link name="laser3">
+    <collision>     
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_laser_right_2_to_laser3 — фиксированное соединение -->
+  <joint name="for_laser_right_2_to_laser3" type="fixed">
+    <parent link="for_laser_right_2"/>
+    <child link="laser3"/>
+    <origin xyz="${-0.065/4} ${-0.001/2 - 0.002/2} 0" rpy="0 0 -1.57"/>
+  </joint>
+
+
+
+  <!-- for_laser_left_1 — блок для laser4 ближе к left_finger -->
+  <link name="for_laser_left_1">
+    <collision>
+      <geometry>
+        <box size="0.0075 0.025 0.002"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.0075 0.025 0.002"/> 
+      </geometry>  
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- left_finger_to_for_laser_left_1 — фиксированное соединение -->
+  <joint name="left_finger_to_for_laser_left_1" type="fixed">	
+    <parent link="left_finger"/>
+    <child link="for_laser_left_1"/>
+    <origin xyz="${-0.065/2} ${-0.015/2 + 0.0075/2 - 0.0075/4} ${-0.002/2 -0.002/2}" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- for_laser_left_2 — блок для laser4 дальше от left_finger-->
+  <link name="for_laser_left_2">
+    <collision>
+      <geometry>
+        <box size="0.065 0.002 0.01"/> 
+      </geometry> 
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.065 0.002 0.01"/> 
+      </geometry>   
+      <material name="light_grey"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_laser_left_1_to_for_laser_left_2 — фиксированное соединение -->
+  <joint name="for_laser_left_1_to_for_laser_left_2" type="fixed">	
+    <parent link="for_laser_left_1"/>
+    <child link="for_laser_left_2"/>
+    <origin xyz="${-0.065/2 + 0.0075/2} ${-0.025/2 + 0.002/2} ${-0.01/2 - 0.002/2}" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <!-- laser2 — внешняя часть лазерного дальномера, которая находится рядом с left_finger -->
+  <link name="laser2">
+    <collision>     
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="0.001 0.005 0.002"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <xacro:default_inertial mass="1e-5"/>
+  </link>
+
+
+  <!-- for_laser_left_2_to_laser2 — фиксированное соединение -->
+  <joint name="for_laser_left_2_to_laser2" type="fixed">
+    <parent link="for_laser_left_2"/>
+    <child link="laser2"/>
+    <origin xyz="${-0.065/4} ${0.001/2 + 0.002/2} 0" rpy="0 0 1.57"/>
+  </joint>
+  
+ 
+
+  <!--
+  ____________________________Датчики____________________________
+   -->
+   
+  <!-- laser1 — лазерный дальномер, который находится на link2 -->
+  <gazebo reference="laser1">
+    <sensor type="ray" name="laser1">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>0.0</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.001</min>
+          <max>2.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>laser1/scan</topicName>
+        <frameName>laser1</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+  <!-- laser3 — лазерный дальномер, который находится рядом с right_finger -->
+  <gazebo reference="laser3">
+    <sensor type="ray" name="laser3">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>0.0</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.001</min>
+          <max>2.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>laser3/scan</topicName>
+        <frameName>laser3</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+  <!-- laser2 — лазерный дальномер, который находится рядом с left_finger -->
+  <gazebo reference="laser2">
+    <sensor type="ray" name="laser2">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>0.0</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.001</min>
+          <max>2.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>laser2/scan</topicName>
+        <frameName>laser2</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+  <!-- laser4 — лазерный дальномер, который находится рядом с link5 -->
+  <gazebo reference="laser4">
+    <sensor type="ray" name="laser4">
+      <pose>0 0 0 0 0 -1.57</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>0.0</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.001</min>
+          <max>2.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>laser4/scan</topicName>
+        <frameName>laser4</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+  <!-- imu1 — imu-датчик, который находится рядом с link1-->
+  <gazebo>
+    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+      <topicName>imu1/data</topicName>
+      <serviceName>imu1/service</serviceName>
+      <bodyName>imu_block1</bodyName>
+      <frameName>imu_block1</frameName>
+      <rpyOffsets>0 0 0</rpyOffsets>
+      <updateRate>10.0</updateRate>
+      <alwaysOn>true</alwaysOn>
+    </plugin>
+  </gazebo>
+
+
+  <!-- imu2 — imu-датчик, который находится на link2 -->
+  <gazebo>
+    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+      <topicName>imu2/data</topicName>
+      <serviceName>imu2/service</serviceName>
+      <bodyName>imu_block2</bodyName>
+      <frameName>imu_block2</frameName>
+      <rpyOffsets>0 0 0</rpyOffsets>
+      <updateRate>10.0</updateRate>
+      <alwaysOn>true</alwaysOn>
+    </plugin>
+  </gazebo>
+
+  <!-- imu3 — imu-датчик, который находится на link3-->
+  <gazebo>
+    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+      <topicName>imu3/data</topicName>
+      <serviceName>imu3/service</serviceName>
+      <bodyName>imu_block3</bodyName>
+      <frameName>imu_block3</frameName>
+      <rpyOffsets>0 0 0</rpyOffsets>
+      <updateRate>10.0</updateRate>
+      <alwaysOn>true</alwaysOn>
+    </plugin>
+  </gazebo>
+
+
+  <!-- imu4 — imu-датчик, который находится рядом с link5 ближе к основанию-->
+  <gazebo>
+    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+      <topicName>imu4/data</topicName>
+      <serviceName>imu4/service</serviceName>
+      <bodyName>imu_block4</bodyName>
+      <frameName>imu_block4</frameName>
+      <rpyOffsets>0 0 0</rpyOffsets>
+      <updateRate>10.0</updateRate>
+      <alwaysOn>true</alwaysOn>
+    </plugin>
+  </gazebo>
+
+
+  <!-- imu5 — imu-датчик, который находится рядом с link5 ближе к захвату-->
+  <gazebo>
+    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+      <topicName>imu5/data</topicName>
+      <serviceName>imu5/service</serviceName>
+      <bodyName>imu_block5</bodyName>
+      <frameName>imu_block5</frameName>
+      <rpyOffsets>0 0 0</rpyOffsets>
+      <updateRate>10.0</updateRate>
+      <alwaysOn>true</alwaysOn>
+    </plugin>
+  </gazebo>
+
+
+  <!-- подключение цветов gazebo -->
+  <gazebo reference="imu1">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+  <gazebo reference="imu2">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+  <gazebo reference="imu3">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+  <gazebo reference="imu4">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+  <gazebo reference="imu5">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+  <gazebo reference="laser1">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+  <gazebo reference="laser2">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+  <gazebo reference="laser3">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+  <gazebo reference="laser4">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+</robot>
