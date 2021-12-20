@@ -361,7 +361,7 @@
   <joint name="link2_to_imu_block2" type="fixed">
     <parent link="link2"/>
     <child link="imu_block2"/>
-    <origin xyz="0 ${0.025/2 + link2_d/2} 0" rpy="0 ${3.14/2 + 3.14/6 + 3.14} 0"/>
+    <origin xyz="0 ${0.025/2 + link2_d/2} 0" rpy="0 ${3.14/2 + 3.14/5.5 + 3.14} 0"/>
   </joint>
 
 
@@ -391,7 +391,7 @@
   <joint name="link2_to_laser1" type="fixed">
     <parent link="link2"/>
     <child link="laser1"/>
-    <origin xyz="${0.017 + 0.0125} ${-link2_d + link1_r} 0.046" rpy="0 ${3.14 + 3.14/2/2/2} 0"/>
+    <origin xyz="${0.017 + 0.0125} ${-link2_d + link1_r} 0.046" rpy="0 ${3.14/2 + 3.14/5.5 + 3.14/2} 0"/>
   </joint>
 
 
