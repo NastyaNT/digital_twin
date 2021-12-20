@@ -24,9 +24,7 @@
 ------------
 * roslaunch moveit_config demo.launch - загрузка модели робота с плагином MotionPlanning для экспериментов.
 
-* По https://roboticscasual.com/ros-tutorial-how-to-create-a-moveit-config-for-the-ur5-and-a-gripper/ : 
-roslaunch moveit_config demo_gazebo.launch - запуск Moveit и Gazebo, загрузка датчиков и контроллеров.
-В терминале возникает предупреждение: Controller Spawner couldn't find the expected controller_manager ROS interface
+* roslaunch moveit_config demo_gazebo.launch - запуск Moveit и Gazebo, загрузка датчиков и контроллеров.
 
 # my_robot_manipulation
 box_capture_rise.cpp:
