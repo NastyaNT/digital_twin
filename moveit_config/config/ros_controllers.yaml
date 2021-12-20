@@ -1,0 +1,50 @@
+robot_arm_controller:
+  type: position_controllers/JointTrajectoryController
+  joints:
+    - base2_to_link1
+    - for_link2_2_to_link2
+    - link2_to_link3
+    - link3_to_link4
+    - for_link5_1_to_link5
+  gains:
+    base2_to_link1:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    for_link2_2_to_link2:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    link2_to_link3:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    link3_to_link4:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    for_link5_1_to_link5:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+robot_hand_controller:
+  type: position_controllers/JointTrajectoryController
+  joints:
+    - for_link5_2_to_left_finger
+    - for_link5_2_to_right_finger
+  gains:
+    for_link5_2_to_left_finger:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
+    for_link5_2_to_right_finger:
+      p: 100
+      d: 1
+      i: 1
+      i_clamp: 1
