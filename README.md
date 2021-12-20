@@ -22,9 +22,7 @@
 # moveit_config
 Пакет с моделью робота для MoveIt.
 ------------
-* roslaunch moveit_config demo.launch - загрузка модели робота с плагином MotionPlanning для экспериментов.
-
-* roslaunch moveit_config demo_gazebo.launch - запуск Moveit и Gazebo, загрузка датчиков и контроллеров.
+roslaunch moveit_config demo_gazebo.launch - запуск Moveit и Gazebo, загрузка датчиков и контроллеров.
 
 # my_robot_manipulation
 box_capture_rise.cpp:
